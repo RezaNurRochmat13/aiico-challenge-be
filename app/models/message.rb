@@ -1,3 +1,7 @@
 class Message < ApplicationRecord
-    mount_uploader :attachment_file, AttachmentFileUploader
+    after_create :notify_pusher, on: :create
+
+    def notify_pusher
+        Pusher.trigger('chat', 'new', self.as_json)
+    end
 end
